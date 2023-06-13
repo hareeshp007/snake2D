@@ -7,6 +7,7 @@ public class FoodController : MonoBehaviour
     [SerializeField]
     public float FoodMoveTimer;
     public float FoodMoveTimerMax=5f;
+    public GameObject targetObject;
     // Start is called before the first frame update
 
 
@@ -19,7 +20,9 @@ public class FoodController : MonoBehaviour
     {
         float x = Random.Range(spawnAreaMin.x, spawnAreaMax.x);
         float y = Random.Range(spawnAreaMin.y, spawnAreaMax.y);
-        this.transform.position=new Vector3(Mathf.Round(x), Mathf.Round(y),0);
+        
+            this.transform.position = new Vector3(Mathf.Round(x), Mathf.Round(y), 0);
+        
         
     }
     public void HandlePositioning()

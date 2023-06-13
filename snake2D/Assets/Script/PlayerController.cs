@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -8,6 +10,9 @@ public class PlayerController : MonoBehaviour
     public Vector2Int GridWrapOffset = new Vector2Int(0, 0);
     public Transform SegmentPrefab;
     public int initialsize;
+    public bool IsShieldActive;
+    public TutorialManager TutorialManager;
+    public ScoreController scoreController;
 
     [SerializeField]
     private Vector2Int gridMoveDirection = Vector2Int.right;
@@ -21,14 +26,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private List<Transform> segments = new List<Transform>();
 
-
+    private void Awake()
+    {
+        ResetSize();
+    }
     private void Start()
     {
         gridMoveTimerMax = 1f / MoveSpeed;
         gridMoveTimer = gridMoveTimerMax;
         gameCamera=Camera.main;
 
-        ResetSize();
+        
     }
 
     private void Update()
@@ -36,6 +44,7 @@ public class PlayerController : MonoBehaviour
         HandleInput();
         HandleMovement();
         WrapAroundScreen();
+        scoreController.ChangeColor(IsShieldActive);
     }
 
     private void HandleInput()
@@ -102,6 +111,7 @@ public class PlayerController : MonoBehaviour
     }
     public void grow()
     {
+        scoreController.ScoreCounter();
         Transform segment = Instantiate(this.SegmentPrefab);
         segment.position = segments[segments.Count - 1].position;
         segments.Add(segment);
@@ -111,7 +121,8 @@ public class PlayerController : MonoBehaviour
         segments.Add(this.transform);
         for(int i = 1; i < initialsize; i++)
         {
-            segments.Add(Instantiate(this.SegmentPrefab));
+            Vector3 pos = new Vector3(Mathf.Round(this.transform.position.x - 1), Mathf.Round(this.transform.position.y),0.0f);
+            segments.Add(Instantiate(this.SegmentPrefab,pos,Quaternion.identity));
         }
         transform.position = Vector3.zero;
     }
@@ -121,5 +132,45 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Game Over");
         }
+    }
+    public void Death()
+    {
+        Debug.Log("player has died");
+        TutorialManager.EnableTutorial();
+        this.enabled = false;
+    }
+    public bool GetShield()
+    {
+        return IsShieldActive;
+    }
+    public void SetShield(bool Active)
+    {
+        IsShieldActive = Active;
+    }
+
+    public void SpeedUp()
+    {
+        MoveSpeed += 2;
+        gridMoveTimerMax = 1f / MoveSpeed;
+        gridMoveTimer = gridMoveTimerMax;
+    }
+
+    internal void SpeedDown()
+    {
+        MoveSpeed -= 2;
+        gridMoveTimerMax = 1f / MoveSpeed;
+        gridMoveTimer = gridMoveTimerMax;
+    }
+
+    internal void MassBurner()
+    {
+        Debug.Log(segments.Count);
+        PlayerSegment lastsegment = segments[segments.Count - 1].gameObject.GetComponent<PlayerSegment>();
+        if (lastsegment != null)
+        {
+            lastsegment.Destroy();
+        }
+        segments.RemoveAt(segments.Count - 1);
+        
     }
 }
