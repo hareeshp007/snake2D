@@ -26,14 +26,17 @@ public class LevelManager : MonoBehaviour
     
     public void StartSinglePlayer()
     {
+        SoundManager.Instance.Play(Sounds.ButtonClick);
         SceneManager.LoadScene(SinglePlayerLevel);
     }
     public void StartCoop()
     {
+        SoundManager.Instance.Play(Sounds.ButtonClick);
         SceneManager.LoadScene(CoOpLevel);
     }
     public void Exit()
     {
+        SoundManager.Instance.Play(Sounds.ButtonClick);
         Application.Quit();
     }
 }

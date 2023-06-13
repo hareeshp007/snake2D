@@ -13,16 +13,19 @@ public class TutorialManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        SoundManager.Instance.Play(Sounds.ButtonClick);
         int currLevel=SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currLevel);
     }
     public void Lobby()
     {
+        SoundManager.Instance.Play(Sounds.ButtonClick);
         SceneManager.LoadScene(LobbyLevel);
     }
     public void EnableTutorial()
     {
-       this.gameObject.SetActive(true);  
+        SoundManager.Instance.Play(Sounds.ButtonClick);
+        this.gameObject.SetActive(true);  
     }
     
 }

@@ -41,7 +41,6 @@ public class PowerupController : MonoBehaviour
         float x = Random.Range(spawnAreaMin.x, spawnAreaMax.x);
         float y = Random.Range(spawnAreaMin.y, spawnAreaMax.y);
         Vector3 pos = new Vector3(x, y, 0);
-        Debug.Log(pos);
         GameObject powerup = Instantiate(Prefab, pos, Quaternion.identity);
     }
 

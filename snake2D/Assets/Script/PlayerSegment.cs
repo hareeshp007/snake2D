@@ -17,11 +17,18 @@ public class PlayerSegment : MonoBehaviour
     {
         if(collision.gameObject.GetComponent<PlayerController>() != null)
         {
+            if (collision.tag == "Player1")
+            {
+                Debug.Log("Player2 wins");
+            }
+            else if (collision.tag == "Player2")
+            {
+                Debug.Log("Player1 wins");
+            } 
             PlayerController controller = collision.gameObject.GetComponent<PlayerController>();
             if (!controller.GetShield())
             {
                 controller.Death();
-                
                 Debug.Log("Game Over");
             }
             else

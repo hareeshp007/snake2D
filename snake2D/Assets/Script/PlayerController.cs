@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public Transform SegmentPrefab;
     public int initialsize;
     public bool IsShieldActive;
+    public bool IsPlayer1;
     public TutorialManager TutorialManager;
     public ScoreController scoreController;
 
@@ -32,6 +34,13 @@ public class PlayerController : MonoBehaviour
     }
     private void Start()
     {
+        if(SceneManager.GetActiveScene().name=="Single Player")
+        {
+            scoreController.setIsPlayerCoOp(false);
+        }else if(SceneManager.GetActiveScene().name == "Co Op")
+        {
+            scoreController.setIsPlayerCoOp(true);
+        }
         gridMoveTimerMax = 1f / MoveSpeed;
         gridMoveTimer = gridMoveTimerMax;
         gameCamera=Camera.main;
@@ -44,27 +53,50 @@ public class PlayerController : MonoBehaviour
         HandleInput();
         HandleMovement();
         WrapAroundScreen();
-        scoreController.ChangeColor(IsShieldActive);
+        scoreController.ChangeColor(IsShieldActive,IsPlayer1);
     }
 
     private void HandleInput()
     {
-        if ((Input.GetKeyDown(KeyCode.UpArrow)|| Input.GetKeyDown(KeyCode.W)) && gridMoveDirection != Vector2Int.down)
+        if (IsPlayer1)
         {
-            gridMoveDirection = Vector2Int.up;
+            if ((Input.GetKeyDown(KeyCode.UpArrow)) && gridMoveDirection != Vector2Int.down)
+            {
+                gridMoveDirection = Vector2Int.up;
+            }
+            else if ((Input.GetKeyDown(KeyCode.DownArrow)) && gridMoveDirection != Vector2Int.up)
+            {
+                gridMoveDirection = Vector2Int.down;
+            }
+            else if ((Input.GetKeyDown(KeyCode.LeftArrow)) && gridMoveDirection != Vector2Int.right)
+            {
+                gridMoveDirection = Vector2Int.left;
+            }
+            else if ((Input.GetKeyDown(KeyCode.RightArrow)) && gridMoveDirection != Vector2Int.left)
+            {
+                gridMoveDirection = Vector2Int.right;
+            }
         }
-        else if ((Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)) && gridMoveDirection != Vector2Int.up)
+        else
         {
-            gridMoveDirection = Vector2Int.down;
+            if (Input.GetKeyDown(KeyCode.W) && gridMoveDirection != Vector2Int.down)
+            {
+                gridMoveDirection = Vector2Int.up;
+            }
+            else if (Input.GetKeyDown(KeyCode.S) && gridMoveDirection != Vector2Int.up)
+            {
+                gridMoveDirection = Vector2Int.down;
+            }
+            else if (Input.GetKeyDown(KeyCode.A) && gridMoveDirection != Vector2Int.right)
+            {
+                gridMoveDirection = Vector2Int.left;
+            }
+            else if (Input.GetKeyDown(KeyCode.D) && gridMoveDirection != Vector2Int.left)
+            {
+                gridMoveDirection = Vector2Int.right;
+            }
         }
-        else if ((Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) && gridMoveDirection != Vector2Int.right)
-        {
-            gridMoveDirection = Vector2Int.left;
-        }
-        else if ((Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D)) && gridMoveDirection != Vector2Int.left)
-        {
-            gridMoveDirection = Vector2Int.right;
-        }
+        
     }
     private void HandleMovement()
     {
@@ -95,7 +127,6 @@ public class PlayerController : MonoBehaviour
         {
             
             screenPos.x = Mathf.Round(0 - GridWrapOffset.x);
-            Debug.Log(screenPos.x);
         }
 
         if (screenPos.y < 0 - GridWrapOffset.y && gridMoveDirection != Vector2Int.up)
@@ -111,7 +142,16 @@ public class PlayerController : MonoBehaviour
     }
     public void grow()
     {
-        scoreController.ScoreCounter();
+        SoundManager.Instance.Play(Sounds.collect);
+        
+        if (!IsPlayer1)
+        {
+            scoreController.ScoreCounter1();
+        }
+        else
+        {
+            scoreController.ScoreCounter();
+        }
         Transform segment = Instantiate(this.SegmentPrefab);
         segment.position = segments[segments.Count - 1].position;
         segments.Add(segment);
@@ -124,7 +164,7 @@ public class PlayerController : MonoBehaviour
             Vector3 pos = new Vector3(Mathf.Round(this.transform.position.x - 1), Mathf.Round(this.transform.position.y),0.0f);
             segments.Add(Instantiate(this.SegmentPrefab,pos,Quaternion.identity));
         }
-        transform.position = Vector3.zero;
+        
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -136,6 +176,7 @@ public class PlayerController : MonoBehaviour
     public void Death()
     {
         Debug.Log("player has died");
+        SoundManager.Instance.Play(Sounds.PlayerDied);
         TutorialManager.EnableTutorial();
         this.enabled = false;
     }
@@ -145,26 +186,36 @@ public class PlayerController : MonoBehaviour
     }
     public void SetShield(bool Active)
     {
+        SoundManager.Instance.Play(Sounds.collect);
         IsShieldActive = Active;
     }
 
     public void SpeedUp()
     {
+        SoundManager.Instance.Play(Sounds.collect);
         MoveSpeed += 2;
         gridMoveTimerMax = 1f / MoveSpeed;
         gridMoveTimer = gridMoveTimerMax;
     }
 
-    internal void SpeedDown()
+    public void SpeedDown()
     {
+        SoundManager.Instance.Play(Sounds.collect);
         MoveSpeed -= 2;
         gridMoveTimerMax = 1f / MoveSpeed;
         gridMoveTimer = gridMoveTimerMax;
     }
 
-    internal void MassBurner()
+    public void MassBurner()
     {
-        Debug.Log(segments.Count);
+        if (IsPlayer1)
+        {
+            scoreController.ScoreDown();
+        }else if (!IsPlayer1)
+        {
+            scoreController.ScoreDown1();
+        }
+        SoundManager.Instance.Play(Sounds.collect);
         PlayerSegment lastsegment = segments[segments.Count - 1].gameObject.GetComponent<PlayerSegment>();
         if (lastsegment != null)
         {
