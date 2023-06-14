@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SinglePlayerLevel: Single Player
-  CoOpLevel: 0
+  CoOpLevel: Co Op
 --- !u!114 &43192816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1430,6 +1430,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1760301524}
+  - component: {fileID: 1760301525}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -1454,6 +1455,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1760301525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760301523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da472c01d278a97458f249680ac473e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundEffect: {fileID: 45680956}
+  SoundMusic: {fileID: 536090812}
+  userVolume: 1
+  IsMute: 0
+  MoveLoop: 0
+  Volume: 1
+  Sounds:
+  - soundType: 0
+    soundclip: {fileID: 8300000, guid: 24d73765699ce3e46bb23cabc3a46494, type: 3}
+  - soundType: 2
+    soundclip: {fileID: 8300000, guid: 832aa39d4fbe053428a67083bb091a1a, type: 3}
+  - soundType: 8
+    soundclip: {fileID: 8300000, guid: 5ab8fc664ca4d604f820e255005a664a, type: 3}
 --- !u!1 &1812417411
 GameObject:
   m_ObjectHideFlags: 0
