@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Player_segment
+  - Player2
+  - Player1
   layers:
   - Default
   - TransparentFX
